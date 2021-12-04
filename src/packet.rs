@@ -278,7 +278,7 @@ impl Packet {
     pub fn get_content_format(&self) -> Option<ContentFormat> {
         if let Some(list) = self.get_option(CoapOption::ContentFormat) {
             if let Some(vector) = list.front() {
-                if vector.len() == 0 {
+                if vector.is_empty() {
                     return None;
                 }
 
