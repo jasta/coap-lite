@@ -228,7 +228,7 @@ impl Packet {
     }
 
     /// Returns the token.
-    pub fn get_token(&self) -> &Vec<u8> {
+    pub fn get_token(&self) -> &[u8] {
         &self.token
     }
 
@@ -299,7 +299,7 @@ impl Packet {
     }
 
     /// Returns the value of the observe option.
-    pub fn get_observe(&self) -> Option<&Vec<u8>> {
+    pub fn get_observe(&self) -> Option<&[u8]> {
         if let Some(list) = self.get_option(CoapOption::Observe) {
             if let Some(flag) = list.front() {
                 return Some(flag);
@@ -752,6 +752,6 @@ mod test {
         let mut p = Packet::new();
         assert_eq!(None, p.get_observe());
         p.set_observe(vec![0]);
-        assert_eq!(Some(&vec![0]), p.get_observe());
+        assert_eq!(Some(&[0u8][..]), p.get_observe());
     }
 }
