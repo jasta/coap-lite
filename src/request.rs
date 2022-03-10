@@ -81,7 +81,10 @@ impl<Endpoint> CoapRequest<Endpoint> {
         }
     }
 
-    /// Returns the path.
+    /// Returns the path by delimiting each segment with a "/".  Note that the
+    /// conversion is done such that segments with invalid UTF-8 are excluded, and as such
+    /// this method should not be used in security sensitive applications.
+    #[deprecated(since = "0.8.1", note = "can expose security flaws by hiding non-utf8 encoded path segments, use get_path_str instead")]
     pub fn get_path(&self) -> String {
         match self.message.get_option(CoapOption::UriPath) {
             Some(options) => {
@@ -95,6 +98,11 @@ impl<Endpoint> CoapRequest<Endpoint> {
             }
             _ => "".to_string(),
         }
+    }
+
+    pub fn get_path_as_str(&self) -> Result<String, IncompatibleOptionValueFormat> {
+        self.get_path_as_vec()
+            .map(|v| v.join("/"))
     }
 
     /// Returns the path as a vector (as it is encoded in CoAP rather than in HTTP-style paths).
@@ -227,7 +235,7 @@ mod test {
         request
             .message
             .add_option(CoapOption::UriPath, path.as_bytes().to_vec());
-        assert_eq!(path, request.get_path());
+        assert_eq!(path, request.get_path_as_str().unwrap());
 
         let path2 = "test-interface2";
         request.set_path(path2);
@@ -254,7 +262,7 @@ mod test {
 
         let path3 = "test-interface2/";
         request.set_path(path3);
-        assert_eq!(path3, request.get_path());
+        assert_eq!(path3, request.get_path_as_str().unwrap());
     }
 
     #[test]

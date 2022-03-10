@@ -39,7 +39,7 @@ impl<Endpoint: Display + PartialEq + Clone> Subject<Endpoint> {
     /// Registers an observer interested in a resource.
     pub fn register(&mut self, request: &CoapRequest<Endpoint>) {
         let observer_endpoint = request.source.as_ref().unwrap();
-        let resource_path = request.get_path();
+        let resource_path = request.get_path_as_str().unwrap_or("".to_string());
         let token = request.message.get_token();
 
         let observer = Observer {
@@ -75,7 +75,7 @@ impl<Endpoint: Display + PartialEq + Clone> Subject<Endpoint> {
     /// Removes an observer from the interested resource.
     pub fn deregister(&mut self, request: &CoapRequest<Endpoint>) {
         let observer_endpoint = request.source.as_ref().unwrap();
-        let resource_path = request.get_path();
+        let resource_path = request.get_path_as_str().unwrap_or("".to_string());
         let token = request.message.get_token();
 
         if let Some(resource) = self.resources.get_mut(&resource_path) {
