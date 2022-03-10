@@ -5,14 +5,14 @@ use crate::error::{IncompatibleOptionValueFormat, InvalidBlockValue};
 use crate::option_value::{OptionValueType, OptionValueU16};
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-pub struct BlockValue {
+pub(crate) struct BlockValue {
   pub num: u16,
   pub more: bool,
   pub size_exponent: u8,
 }
 
 impl BlockValue {
-  pub fn new(num: usize, more: bool, size: usize) -> Result<Self, InvalidBlockValue> {
+  pub(crate) fn new(num: usize, more: bool, size: usize) -> Result<Self, InvalidBlockValue> {
     let true_size_exponent = Self::largest_power_of_2_not_in_excess(size)
         .ok_or(InvalidBlockValue::SizeExponentEncodingError(size))?;
 
